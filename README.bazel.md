@@ -42,7 +42,9 @@ Similarly, you can run other `pnpm` commands to add or remove packages. Use `baz
 path/to/package% $(bazel info workspace)/tools/pnpm add http-server
 ```
 
-This ensures you use the same pnpm version as other developers, and the lockfile format stays constant.## Working with Python packages
+This ensures you use the same pnpm version as other developers, and the lockfile format stays constant.
+
+## Working with Python packages
 
 After adding a new `import` statement in Python code, run `aspect configure` to update the BUILD file.
 
@@ -67,7 +69,10 @@ EOF
 Then edit the new entry in `tools/BUILD` to replace `package_name_snake_case` with the name of the package that exports a console script, and `scriptname` with the name of the script.
 
 >[!NOTE]
->See https://rules-python.readthedocs.io/en/stable/api/python/entry_points/py_console_script_binary.html for more details.## Working with Go modules
+>See https://rules-python.readthedocs.io/en/stable/api/python/entry_points/py_console_script_binary.html for more details.
+
+
+## Working with Go modules
 
 After adding a new `import` statement in Go code, run `aspect configure` to update the BUILD file.
 
@@ -80,21 +85,10 @@ If the package is not already a dependency of the project, you have to do some a
 % aspect mod tidy
 # Repeat
 % aspect configure
-```## Stamping release builds
+```
 
-Stamping produces non-deterministic outputs by including information such as a version number or commit hash.
 
-Read more: https://blog.aspect.build/stamping-bazel-builds-with-selective-delivery
-
-To declare a build output which can be stamped, use a rule that is stamp-aware such as
-[expand_template](https://docs.aspect.build/rulesets/aspect_bazel_lib/docs/expand_template).
-
-The `/tools/workspace_status.sh` file lists available keys and may include:
-
-- `STABLE_GIT_COMMIT`: the commit hash of the HEAD (current) commit
-- `STABLE_MONOREPO_VERSION`: a semver-compatible version in the form `2020.44.123+abc1234`
-
-To request stamped build outputs, add the flag `-config=release`.## Working with Cargo
+## Working with Cargo
 
 If you need to run `cargo` outside of Bazel, you can do so by running `./tools/cargo`, e.g.
 
@@ -112,3 +106,21 @@ If you need to run `cargo` outside of Bazel, you can do so by running `./tools/c
              25 deactivated features
     Updating crates.io index
 ```
+
+
+## Stamping release builds
+
+Stamping produces non-deterministic outputs by including information such as a version number or commit hash.
+
+Read more: https://blog.aspect.build/stamping-bazel-builds-with-selective-delivery
+
+To declare a build output which can be stamped, use a rule that is stamp-aware such as
+[expand_template](https://docs.aspect.build/rulesets/aspect_bazel_lib/docs/expand_template).
+
+The `/tools/workspace_status.sh` file lists available keys and may include:
+
+- `STABLE_GIT_COMMIT`: the commit hash of the HEAD (current) commit
+- `STABLE_MONOREPO_VERSION`: a semver-compatible version in the form `2020.44.123+abc1234`
+
+To request stamped build outputs, add the flag `-config=release`.
+
