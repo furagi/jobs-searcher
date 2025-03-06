@@ -1,0 +1,17 @@
+configure:
+  languages:
+    go: true
+    javascript: true
+    python: true
+  plugins:
+    - .aspect/cli/package-json-scripts.star
+    - .aspect/cli/pytest_main.star
+lint:
+  aspects:
+    - //tools/lint:linters.bzl%eslint
+    - //tools/lint:linters.bzl%ruff
+
+plugins:
+    - name: fix-visibility
+      from: github.com/aspect-build/plugin-fix-visibility
+      version: v0.1.0
