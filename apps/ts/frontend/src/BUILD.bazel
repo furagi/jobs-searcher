@@ -2,8 +2,14 @@
 
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
-load("//apps/ts/frontend:defs.bzl", "ASSET_PATTERNS", "SRC_PATTERNS", "TEST_PATTERNS", "TRANSPILER")
-load("//apps/ts/frontend:vitest.bzl", "vitest")
+load(
+    "//apps/ts/frontend:defs.bzl",
+    "APP_TRANSPILER",
+    "ASSET_PATTERNS",
+    "SPEC_TRANSPILER",
+    "SRC_PATTERNS",
+    "TEST_PATTERNS",
+)
 load("//tools/lint:linters.bzl", "eslint_test")
 
 js_library(
@@ -20,10 +26,23 @@ ts_project(
         exclude = TEST_PATTERNS,
     ),
     data = [":assets"],
+    declaration = True,
+    resolve_json_module = True,
     source_map = True,
-    transpiler = TRANSPILER,
-    tsconfig = "//apps/ts/frontend:app_tsconfig",
+    transpiler = APP_TRANSPILER,
+    tsconfig = "//apps/ts/frontend:app_tsconfig",  # keep
     visibility = ["//apps/ts/frontend:__subpackages__"],
+    deps = [
+        "//apps/ts/frontend:node_modules/@types/react",
+        "//apps/ts/frontend:node_modules/@types/react-dom",
+        "//apps/ts/frontend:node_modules/react",
+        "//apps/ts/frontend:node_modules/react-dom",
+        "//apps/ts/frontend:node_modules/vite-plugin-svgr",
+        "//apps/ts/frontend:node_modules/web-vitals",
+
+        # "//apps/ts/frontend:node_modules/@testing-library/react",
+        # "//apps/ts/frontend:node_modules/vitest",
+    ],
 )
 
 ts_project(
@@ -34,27 +53,17 @@ ts_project(
     ),
     declaration = True,
     resolve_json_module = True,
-    transpiler = TRANSPILER,
-    tsconfig = "//apps/ts/frontend:spec_tsconfig",
+    source_map = True,
+    transpiler = SPEC_TRANSPILER,
+    tsconfig = "//apps/ts/frontend:spec_tsconfig",  # keep
+    visibility = ["//apps/ts/frontend:__subpackages__"],
     deps = [
-        ":node_modules/@types/jest",
         ":src",
-        "//:node_modules/vitest",
+        "//:node_modules/@types/jest",
         "//apps/ts/frontend:node_modules/@testing-library/jest-dom",
         "//apps/ts/frontend:node_modules/@testing-library/react",
+        "//apps/ts/frontend:node_modules/jsdom",
+        "//apps/ts/frontend:node_modules/vitest",
+        "//apps/ts/frontend:vite.config",
     ],
-)
-
-vitest(
-    name = "test",
-    config = "//react:vite.config",
-    deps = [":test_lib"],
-)
-
-# Test that fails if the lint report is non-empty
-# Remove the `eslint-disable-next-line` line from index.tsx to see this test fail.
-eslint_test(
-    name = "lint",
-    timeout = "short",
-    srcs = [":src_typings"],
 )

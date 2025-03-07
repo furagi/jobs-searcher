@@ -5,5 +5,5 @@ export const App: FC = () => {
     console.log("Hello, world!");
   }, []);
 
-  return "Hello, world";
+  return "Hello, world!";
 };

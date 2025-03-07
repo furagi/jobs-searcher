@@ -10,5 +10,6 @@ export default defineConfig({
     globals: true,
     css: true,
     reporters: ["verbose"],
+    environment: "jsdom",
   },
 });

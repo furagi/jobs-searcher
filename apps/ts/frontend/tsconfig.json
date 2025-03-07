@@ -1,9 +1,16 @@
 {
   "extends": "../../../tsconfig.base.json",
   "files": [],
-  "include": [],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "compilerOptions": {
     "esModuleInterop": true,
-    "lib": ["dom", "dom.iterable", "esnext"]
-  }
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["./vite-env.d.ts"],
+    "jsx": "react-jsx",
+    "module": "ES2020",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "es5"
+  },
+  "exclude": ["jest.config.ts"]
 }

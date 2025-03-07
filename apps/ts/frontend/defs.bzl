@@ -16,14 +16,19 @@ SRC_PATTERNS = [
 # Filename conventions described at
 # https://create-react-app.dev/docs/running-tests#filename-conventions
 TEST_PATTERNS = [
-    "*.test.tsx",
-    "*.test.ts",
-    "*.spec.tsx",
-    "*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.spec.ts",
 ]
 
 # Partially-apply our (generated) .swcrc config file to the swc starlark function
-TRANSPILER = partial.make(
+APP_TRANSPILER = partial.make(
     swc,
     swcrc = "//apps/ts/frontend:.swcrc",
+)
+
+SPEC_TRANSPILER = partial.make(
+    swc,
+    swcrc = "//apps/ts/frontend:.swcrc_spec",
 )

@@ -1,18 +1,23 @@
 load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_binary", "js_run_devserver")
-load("@aspect_rules_ts//ts:defs.bzl", "ts_config", "ts_project")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@npm//:tsconfig-to-swcconfig/package_json.bzl", tsconfig_to_swcconfig = "bin")
 load("@npm//apps/ts/frontend:vite/package_json.bzl", "bin")
+load("@npm//apps/ts/frontend:vitest/package_json.bzl", vitest = "bin")
 
 npm_link_all_packages(name = "node_modules")
 
 exports_files(
-    ["tsconfig.json"],
+    [
+        "tsconfig.json",
+        "vite-env.d.ts",
+    ],
     visibility = ["//apps/ts/frontend:__subpackages__"],
 )
 
 tsconfig_deps = [
     "//apps/ts/frontend:tsconfig.json",
+    "//apps/ts/frontend:vite-env.d.ts",
     "//:tsconfig_base",
     "//:tsconfig_strictest",
 ]
@@ -24,11 +29,15 @@ ts_config(
     deps = tsconfig_deps,
 )
 
-ts_config(
-    name = "spec_tsconfig",
-    src = "tsconfig.spec.json",
+js_library(
+    name = "vite.config",
+    srcs = ["vite.config.ts"],
     visibility = ["//apps/ts/frontend:__subpackages__"],
-    deps = tsconfig_deps,
+    deps = [
+        ":node_modules/@vitejs/plugin-react",
+        ":node_modules/vite-plugin-svgr",
+        ":node_modules/vitest",
+    ],
 )
 
 RUNTIME_DEPS = [
@@ -41,6 +50,7 @@ RUNTIME_DEPS = [
     ":node_modules/react-dom",
     ":node_modules/react",
     ":node_modules/web-vitals",
+    ":vite.config",
 ]
 
 tsconfig_to_swcconfig.t2s(
@@ -64,17 +74,6 @@ js_library(
     srcs = ["package.json"],
     visibility = ["//visibility:public"],
     deps = [":node_modules/eslint-config-react-app"],
-)
-
-js_library(
-    name = "vite.config",
-    srcs = ["vite.config.ts"],
-    data = [
-        ":node_modules/@vitejs/plugin-react",
-        ":node_modules/vite-plugin-svgr",
-        ":node_modules/vitest",
-    ],
-    visibility = ["//apps/ts/frontend:__subpackages__"],
 )
 
 bin.vite_binary(
@@ -107,4 +106,40 @@ bin.vite_binary(
     args = ["preview"],
     chdir = package_name(),
     data = [":build"],
+)
+
+# ====================================== Tests setup ==============================================
+ts_config(
+    name = "spec_tsconfig",
+    src = "tsconfig.spec.json",
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+    deps = tsconfig_deps,
+)
+
+tsconfig_to_swcconfig.t2s(
+    name = "write_spec_swcrc",
+    srcs = [
+        "tsconfig.json",
+        "tsconfig.spec.json",
+        "//:tsconfig_base",
+        "//:tsconfig_strictest",
+    ],
+    args = [
+        "--filename",
+        "$(location tsconfig.spec.json)",
+    ],
+    stdout = ".swcrc_spec",
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+)
+
+vitest.vitest_test(
+    name = "test",
+    # Perform a single run without watch mode. If we want to watch we will use ibazel.
+    args = ["run"],
+    # Paths in the configuration file are relative to its folder, so we must use that as the
+    # working directory since vite doesn't handle this itself.
+    chdir = package_name(),
+    data = [
+        "//apps/ts/frontend/src:test_lib",
+    ] + RUNTIME_DEPS,
 )

@@ -44,6 +44,11 @@ npm.npm_translate_lock(
     name = "npm",
     npmrc = "//:.npmrc",
     pnpm_lock = "//:pnpm-lock.yaml",
+    public_hoist_packages = {
+        "eslint-config-react-app": ["react"],
+        "eslint": ["react"],
+    },
+    verify_node_modules_ignored = "//:.bazelignore",
 )
 use_repo(npm, "npm")
 
