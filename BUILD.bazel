@@ -1,5 +1,8 @@
+load("@aspect_rules_py//py:defs.bzl", "py_library")
+
 """Targets in the repository root"""
 
+load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("@pip//:requirements.bzl", "all_whl_requirements")
@@ -9,11 +12,6 @@ load("@rules_python_gazelle_plugin//modules_mapping:def.bzl", "modules_mapping")
 alias(
     name = "format",
     actual = "//tools/format",
-)
-
-exports_files(
-    ["pyproject.toml"],
-    visibility = ["//:__subpackages__"],
 )
 
 npm_link_all_packages(name = "node_modules")
@@ -33,6 +31,30 @@ js_library(
     srcs = ["prettier.config.cjs"],
     visibility = ["//tools/format:__pkg__"],
     deps = [],
+)
+
+ts_visibility = [
+    "//apps/ts:__subpackages__",
+    "//packages/ts:__subpackages__",
+]
+
+copy_to_bin(
+    name = "tsconfig_base",
+    srcs = ["tsconfig.base.json"],
+    visibility = ts_visibility,
+)
+
+js_library(
+    name = "tsconfig_strictest",
+    srcs = ["//:node_modules/@tsconfig/strictest/tsconfig.json"],
+    visibility = ts_visibility,
+)
+
+exports_files(
+    [
+        "pyproject.toml",
+    ],
+    visibility = ["//:__subpackages__"],
 )
 
 # Set `aspect configure` to produce aspect_rules_py targets rather than rules_python
@@ -61,4 +83,10 @@ gazelle_python_manifest(
     name = "gazelle_python_manifest",
     modules_mapping = ":modules_map",
     pip_repository_name = "pip",
+)
+
+py_library(
+    name = "jobs_searcher",
+    srcs = ["node_modules/.pnpm/flatted@3.3.3/node_modules/flatted/python/flatted.py"],
+    visibility = ["//:__subpackages__"],
 )

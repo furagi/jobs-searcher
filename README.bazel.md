@@ -7,7 +7,9 @@ This repository uses [Aspect Workflows](https://aspect.build) to provide an exce
 - Run `aspect run format` to re-format all files locally.
 - Run `aspect run format path/to/file` to re-format a single file.
 - Run `pre-commit install` to auto-format changed files on `git commit`.
-- For CI verification, setup `format` task, see https://docs.aspect.build/workflows/features/lint#formatting## Linting code
+- For CI verification, setup `format` task, see https://docs.aspect.build/workflows/features/lint#formatting
+
+## Linting code
 
 Projects use [rules_lint](https://github.com/aspect-build/rules_lint) to run linting tools using Bazel's aspects feature.
 Linters produce report files, which they cache like any other Bazel actions.

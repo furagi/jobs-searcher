@@ -1,0 +1,110 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library", "js_run_binary", "js_run_devserver")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config", "ts_project")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//:tsconfig-to-swcconfig/package_json.bzl", tsconfig_to_swcconfig = "bin")
+load("@npm//apps/ts/frontend:vite/package_json.bzl", "bin")
+
+npm_link_all_packages(name = "node_modules")
+
+exports_files(
+    ["tsconfig.json"],
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+)
+
+tsconfig_deps = [
+    "//apps/ts/frontend:tsconfig.json",
+    "//:tsconfig_base",
+    "//:tsconfig_strictest",
+]
+
+ts_config(
+    name = "app_tsconfig",
+    src = "tsconfig.app.json",
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+    deps = tsconfig_deps,
+)
+
+ts_config(
+    name = "spec_tsconfig",
+    src = "tsconfig.spec.json",
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+    deps = tsconfig_deps,
+)
+
+RUNTIME_DEPS = [
+    "//apps/ts/frontend/src:assets",
+    "//apps/ts/frontend/src",
+    "//apps/ts/frontend/public",
+    "index.html",
+    "package.json",
+    "//apps/ts/frontend:app_tsconfig",
+    ":node_modules/react-dom",
+    ":node_modules/react",
+    ":node_modules/web-vitals",
+]
+
+tsconfig_to_swcconfig.t2s(
+    name = "write_swcrc",
+    srcs = [
+        "tsconfig.app.json",
+        "tsconfig.json",
+        "//:tsconfig_base",
+        "//:tsconfig_strictest",
+    ],
+    args = [
+        "--filename",
+        "$(location tsconfig.app.json)",
+    ],
+    stdout = ".swcrc",
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+)
+
+js_library(
+    name = "package_json",
+    srcs = ["package.json"],
+    visibility = ["//visibility:public"],
+    deps = [":node_modules/eslint-config-react-app"],
+)
+
+js_library(
+    name = "vite.config",
+    srcs = ["vite.config.ts"],
+    data = [
+        ":node_modules/@vitejs/plugin-react",
+        ":node_modules/vite-plugin-svgr",
+        ":node_modules/vitest",
+    ],
+    visibility = ["//apps/ts/frontend:__subpackages__"],
+)
+
+bin.vite_binary(
+    name = "vite",
+    chdir = package_name(),
+    data = ["vite.config"],
+)
+
+# Fast developer round-trip under ibazel
+js_run_devserver(
+    name = "start",
+    args = ["."],
+    data = RUNTIME_DEPS,
+    tool = ":vite",
+)
+
+# Create production release artifacts
+js_run_binary(
+    name = "build",
+    srcs = RUNTIME_DEPS,
+    args = ["build"],
+    mnemonic = "ViteBuild",
+    out_dirs = ["dist"],
+    tool = ":vite",
+)
+
+# Hosts the production-bundled application in a web server
+bin.vite_binary(
+    name = "preview",
+    args = ["preview"],
+    chdir = package_name(),
+    data = [":build"],
+)

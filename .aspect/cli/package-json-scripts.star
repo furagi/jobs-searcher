@@ -9,6 +9,7 @@ def declare_targets(ctx):
         for (script, cmd) in file.query_results["scripts"][0].items():
             # Heuristics to try to understand the structure of a random npm script
             cmd_parts = cmd.split(" ")
+            print(cmd_parts)
 
             # Looks like it just directly runs an entry point script
             if cmd_parts[0] == "node" and len(cmd_parts) == 2:
