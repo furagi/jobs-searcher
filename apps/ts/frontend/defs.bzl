@@ -26,9 +26,11 @@ TEST_PATTERNS = [
 APP_TRANSPILER = partial.make(
     swc,
     swcrc = "//apps/ts/frontend:.swcrc",
+    source_maps = True,
 )
 
 SPEC_TRANSPILER = partial.make(
     swc,
     swcrc = "//apps/ts/frontend:.swcrc_spec",
+    source_maps = True,
 )
