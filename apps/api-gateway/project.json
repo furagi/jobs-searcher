@@ -35,7 +35,9 @@
       }
     },
     "test": {
+      "executor": "@nx/jest:jest",
       "options": {
+        "jestConfig": "apps/api-gateway/jest.config.ts",
         "passWithNoTests": true
       }
     }
