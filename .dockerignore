@@ -1,3 +1,5 @@
+.cursor
+
 jest.config.ts
 jest.preset.js
 .prettierrc

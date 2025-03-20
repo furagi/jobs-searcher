@@ -4,7 +4,10 @@ import { fileURLToPath } from 'url';
 import js from '@eslint/js';
 import { fixupConfigRules } from '@eslint/compat';
 import nx from '@nx/eslint-plugin';
+import antfu from '@antfu/eslint-config';
 import baseConfig from '../../eslint.config.mjs';
+
+
 const compat = new FlatCompat({
   baseDirectory: dirname(fileURLToPath(import.meta.url)),
   recommendedConfig: js.configs.recommended,
@@ -18,4 +21,7 @@ export default [
   {
     ignores: ['.next/**/*'],
   },
+  ...antfu({
+    react: true,
+  }),
 ];
