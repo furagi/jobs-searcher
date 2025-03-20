@@ -4,6 +4,8 @@
     "composite": true,
     "target": "es2022",
     "lib": ["es2022"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "strict": true,
@@ -15,6 +17,7 @@
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "noEmitOnError": true,
+    "sourceMap": true,
     "isolatedModules": true,
     "skipLibCheck": true
   }

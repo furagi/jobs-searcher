@@ -7,15 +7,15 @@ build:
       docker:
         dockerfile: apps/api-gateway/Dockerfile.local
       sync:
-          manual:
-            - src: 'apps/api-gateway/**/*.{ts}'
-              dest: .
-            - src: 'packages/**/*.{ts}'
-              dest: .
-            - src: 'package.json'
-              dest: .
-            - src: 'package-lock.json'
-              dest: .
+        manual:
+          - src: 'apps/api-gateway/**/*.{ts}'
+            dest: .
+          - src: 'packages/**/*.{ts}'
+            dest: .
+          - src: package.json
+            dest: .
+          - src: package-lock.json
+            dest: .
     - image: frontend
       context: .
       docker:
@@ -28,9 +28,9 @@ build:
             dest: .
           - src: 'packages/**/*.{ts}'
             dest: .
-          - src: 'package.json'
+          - src: package.json
             dest: .
-          - src: 'package-lock.json'
+          - src: package-lock.json
             dest: .
     - image: nginx
       context: infra/nginx
@@ -42,23 +42,23 @@ build:
             dest: /etc/nginx/
 manifests:
   rawYaml:
-  # - infra/k8s/api-gateway-service.yaml
-  # - infra/k8s/api-gateway-deployment.yaml
-  - infra/k8s/*.yaml
+    # - infra/k8s/api-gateway-service.yaml
+    # - infra/k8s/api-gateway-deployment.yaml
+    - infra/k8s/*.yaml
 portForward:
-- resourceType: service
-  resourceName: api-gateway-service
-  port: 3000
-  localPort: 3000
-- resourceType: service
-  resourceName: nginx-service
-  port: 80
-  localPort: 3080
-# - resourceType: service
-#   resourceName: postgres-service
-#   port: 5432
-#   localPort: 5433
-# - resourceType: service
-#   resourceName: redis-service
-#   port: 6379
-#   localPort: 6380
+  - resourceType: service
+    resourceName: api-gateway-service
+    port: 3000
+    localPort: 3000
+  - resourceType: service
+    resourceName: nginx-service
+    port: 80
+    localPort: 3080
+  - resourceType: service
+    resourceName: postgres-service
+    port: 5432
+    localPort: 5433
+  - resourceType: service
+    resourceName: redis-service
+    port: 6379
+    localPort: 6380
