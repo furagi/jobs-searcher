@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: api-gateway
+        image: api-gateway
+        ports:
+        - containerPort: 3000
+        # env:
+        # - name: DJANGO_SECRET
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: app-secrets
+        #       key: django-secret
+        # - name: POSTGRES_HOST
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: app-config-local
+        #       key: postgres-host
+        # - name: POSTGRES_PORT
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: app-config
+        #       key: postgres-port
+        # - name: POSTGRES_DB
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: app-config
+        #       key: postgres-db
+        # - name: POSTGRES_USER
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: app-secrets
+        #       key: postgres-user
+        # - name: POSTGRES_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: app-secrets
+        #       key: postgres-password
+        # - name: REDIS_HOST
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: app-config-local
+        #       key: redis-host
+        # - name: REDIS_PORT
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: app-config
+        #       key: redis-port
+        # - name: REDIS_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: app-secrets
+        #       key: redis-password

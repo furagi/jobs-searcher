@@ -1,0 +1,6 @@
+jest.config.ts
+Dockerfile
+Dockerfile.local
+tscofnig.spec.json
+README.md
+node_modules

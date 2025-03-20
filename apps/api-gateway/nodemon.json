@@ -1,0 +1,5 @@
+{
+  "watch": ["apps/api-gateway/src", "package-lock.json"],
+  "ext": "ts",
+  "exec": "nx run api-gateway:serve:development"
+}

@@ -1,0 +1,64 @@
+apiVersion: skaffold/v4beta12
+kind: Config
+build:
+  artifacts:
+    - image: api-gateway
+      context: .
+      docker:
+        dockerfile: apps/api-gateway/Dockerfile.local
+      sync:
+          manual:
+            - src: 'apps/api-gateway/**/*.{ts}'
+              dest: .
+            - src: 'packages/**/*.{ts}'
+              dest: .
+            - src: 'package.json'
+              dest: .
+            - src: 'package-lock.json'
+              dest: .
+    - image: frontend
+      context: .
+      docker:
+        dockerfile: apps/frontend/Dockerfile.local
+      sync:
+        manual:
+          - src: 'apps/frontend/**/*.{ts}'
+            dest: .
+          - src: 'packages/**/*.{ts}'
+            dest: .
+          - src: 'packages/**/*.{ts}'
+            dest: .
+          - src: 'package.json'
+            dest: .
+          - src: 'package-lock.json'
+            dest: .
+    - image: nginx
+      context: infra/nginx
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.conf'
+            dest: /etc/nginx/
+manifests:
+  rawYaml:
+  # - infra/k8s/api-gateway-service.yaml
+  # - infra/k8s/api-gateway-deployment.yaml
+  - infra/k8s/*.yaml
+portForward:
+- resourceType: service
+  resourceName: api-gateway-service
+  port: 3000
+  localPort: 3000
+- resourceType: service
+  resourceName: nginx-service
+  port: 80
+  localPort: 3080
+# - resourceType: service
+#   resourceName: postgres-service
+#   port: 5432
+#   localPort: 5433
+# - resourceType: service
+#   resourceName: redis-service
+#   port: 6379
+#   localPort: 6380
