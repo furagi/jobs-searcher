@@ -1,4 +1,8 @@
 jest.config.ts
+jest.preset.js
+.prettierrc
+.prettierignore
+
 Dockerfile
 Dockerfile.local
 tscofnig.spec.json
