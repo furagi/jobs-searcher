@@ -1,6 +1,5 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-// import { fixupConfigRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import nx from '@nx/eslint-plugin';
