@@ -32,6 +32,7 @@ export function buildConfig(config = {}) {
     rules: {
       'style/no-multiple-empty-lines': 'off',
       'style/semi': 'off',
+      'test/prefer-lowercase-title': 'off',
     },
   }, {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],

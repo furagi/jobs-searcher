@@ -1,3 +1,8 @@
-import baseConfig from '../../eslint.config.mjs';
+import { buildConfig } from '../../eslint.config.mjs';
 
-export default baseConfig;
+export default buildConfig({
+  react: true,
+  typescript: {
+    tsconfigPath: 'tsconfig.json',
+  },
+});
